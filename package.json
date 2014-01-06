@@ -1,6 +1,6 @@
 {
   "name": "selenium-mocha",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "run selenium tests in the browser",
   "keywords": [],
   "dependencies": {
