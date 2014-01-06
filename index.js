@@ -16,7 +16,7 @@ module.exports = browser;
 module.exports.remote = remote;
 module.exports.timeout = timeout;
 module.exports.operationTimeout = operationTimeout;
-
+module.exports.async = async;
 
 function remote() {
   remotes = Array.prototype.slice.call(arguments);
@@ -77,7 +77,7 @@ function browser(fn, options) {
     if (options.operationTimeout) {
       onOperationTimeout = function () {
         self.timedOut = true;
-        done(new Error('operation timeout of ' + ms + 'ms exceeded'));
+        done(new Error('operation timeout of ' + ms(operationTimeout.toString()) + 'ms exceeded'));
       };
       if (timedOut) return onOperationTimeout();
     }
@@ -86,21 +86,37 @@ function browser(fn, options) {
   }
 }
 
+
 function async(makeGenerator, resetTimeout){
   return function (){
+    var rt = resetTimeout;
     var generator = makeGenerator.apply(this, arguments);
+
+    function setResetTimeoutMethod(method) {
+      rt = method;
+    }
 
     function handle(result){ // { done: [Boolean], value: [Object] }
       if (result.done) return Promise.from(result.value);
-
+      if (result.value && typeof result.value.setResetTimeoutMethod === 'function') {
+        result.value.setResetTimeoutMethod(rt);
+        finalResult.setResetTimeoutMethod = function (method) {
+          setResetTimeoutMethod(method);
+          result.value.setResetTimeoutMethod(method);
+        };
+      }
       return Promise.from(result.value).then(function (res){
-        if (resetTimeout) resetTimeout();
+        if (rt) rt();
+        finalResult.setResetTimeoutMethod = setResetTimeoutMethod;
         return handle(generator.next(res));
       }, function (err){
+        finalResult.setResetTimeoutMethod = setResetTimeoutMethod;
         return handle(generator.throw(err));
       });
     }
 
-    return handle(generator.next());
+    var finalResult = handle(generator.next());
+    finalResult.setResetTimeoutMethod = setResetTimeoutMethod;
+    return finalResult;
   }
 }
