@@ -77,7 +77,7 @@ function browser(fn, options) {
     if (options.operationTimeout) {
       onOperationTimeout = function () {
         self.timedOut = true;
-        done(new Error('operation timeout of ' + ms(operationTimeout.toString()) + 'ms exceeded'));
+        done(new Error('operation timeout of ' + ms(options.operationTimeout.toString()) + 'ms exceeded'));
       };
       if (timedOut) return onOperationTimeout();
     }
@@ -92,25 +92,26 @@ function async(makeGenerator, resetTimeout){
     var rt = resetTimeout;
     var generator = makeGenerator.apply(this, arguments);
 
+    var currentValue = null;
     function setResetTimeoutMethod(method) {
       rt = method;
-    }
+      if (currentValue && typeof currentValue.setResetTimeoutMethod === 'function') {
+        currentValue.setResetTimeoutMethod(rt);
+      }
+    };
 
     function handle(result){ // { done: [Boolean], value: [Object] }
       if (result.done) return Promise.from(result.value);
       if (result.value && typeof result.value.setResetTimeoutMethod === 'function') {
         result.value.setResetTimeoutMethod(rt);
-        finalResult.setResetTimeoutMethod = function (method) {
-          setResetTimeoutMethod(method);
-          result.value.setResetTimeoutMethod(method);
-        };
+        currentValue = result.value;
       }
       return Promise.from(result.value).then(function (res){
         if (rt) rt();
-        finalResult.setResetTimeoutMethod = setResetTimeoutMethod;
+        currentValue = null;
         return handle(generator.next(res));
       }, function (err){
-        finalResult.setResetTimeoutMethod = setResetTimeoutMethod;
+        currentValue = null;
         return handle(generator.throw(err));
       });
     }
