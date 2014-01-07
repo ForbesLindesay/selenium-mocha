@@ -1,7 +1,5 @@
 'use strict';
 
-'use strict';
-
 //don't use libraries like assert directly with the browser tests because all
 //the browser methods actually return promises, not real objects.
 
