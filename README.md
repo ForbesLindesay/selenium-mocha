@@ -3,8 +3,8 @@
 run selenium tests in the browser using generators and mocha
 
 [![Build Status](https://img.shields.io/travis/ForbesLindesay/selenium-mocha/master.svg)](https://travis-ci.org/ForbesLindesay/selenium-mocha)
-[![Dependency Status](https://img.shields.io/gemnasium/ForbesLindesay/selenium-mocha.svg)](https://gemnasium.com/ForbesLindesay/selenium-mocha)
-[![NPM version](https://img.shields.io/npm/v/selenium-mocha.svg)](http://badge.fury.io/js/selenium-mocha)
+[![Dependency Status](https://img.shields.io/david/ForbesLindesay/selenium-mocha.svg)](https://david-dm.org/ForbesLindesay/selenium-mocha)
+[![NPM version](https://img.shields.io/npm/v/selenium-mocha.svg)](https://www.npmjs.com/package/selenium-mocha)
 
 ## Installation
 
