@@ -1,5 +1,7 @@
 # selenium-mocha
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/ForbesLindesay/selenium-mocha.svg)](https://greenkeeper.io/)
+
 run selenium tests in the browser using generators and mocha
 
 [![Build Status](https://img.shields.io/travis/ForbesLindesay/selenium-mocha/master.svg)](https://travis-ci.org/ForbesLindesay/selenium-mocha)
